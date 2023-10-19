@@ -11,7 +11,7 @@ void open_file(char *file_name)
 	FILE *_fd = fopen(file_name, "r");
 
 	if (file_name == NULL || _fd == NULL)
-		err(2, file_name);
+		errors(2, file_name);
 
 	read_file(_fd);
 	fclose(_fd);
@@ -52,7 +52,7 @@ int parse_line(char *buffer, int line_number, int format)
 	const char *delim = "\n ";
 
 	if (buffer == NULL)
-		err(4);
+		errors(4);
 
 	_opcode = strtok(buffer, delim);
 	if (_opcode == NULL)
@@ -64,7 +64,7 @@ int parse_line(char *buffer, int line_number, int format)
 	if (strcmp(_opcode, "queue") == 0)
 		return (1);
 
-	find_func(_opcode, val, line_number, format);
+	find_function(_opcode, val, line_number, format);
 	return (format);
 }
 
@@ -107,12 +107,12 @@ void find_function(char *opcode, char *value, int ln, int format)
 	{
 		if (strcmp(opcode, func_list[i].opcode) == 0)
 		{
-			call_fun(func_list[i].f, opcode, value, ln, format);
+			call_funtion(func_list[i].f, opcode, value, ln, format);
 			flag = 0;
 		}
 	}
 	if (flag == 1)
-		err(3, ln, opcode);
+		errors(3, ln, opcode);
 }
 
 /**
@@ -139,11 +139,11 @@ void call_funtion(op_func func, char *op, char *val, int ln, int format)
 			flag = -1;
 		}
 		if (val == NULL)
-			err(5, ln);
+			errors(5, ln);
 		for (i = 0; val[i] != '\0'; i++)
 		{
 			if (isdigit(val[i]) == 0)
-				err(5, ln);
+				errors(5, ln);
 		}
 		_node = create_node(atoi(val) * flag);
 		if (format == 0)

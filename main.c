@@ -31,7 +31,7 @@ stack_t *create_node(int n)
 
 	node = malloc(sizeof(stack_t));
 	if (node == NULL)
-		err(4);
+		errors(4);
 	node->next = NULL;
 	node->prev = NULL;
 	node->n = n;
@@ -56,13 +56,12 @@ void free_nodes(void)
 	}
 }
 
-
 /**
  * add_to_queue - Adds a node to the queue.
  * @new_node: Pointer to the new node.
  * @ln: line number of the opcode.
  */
-void add_to_queue(stack_t **new_node, __attribute__((unused))unsigned int ln)
+void add_to_queue(stack_t **new_node, __attribute__((unused)) unsigned int ln)
 {
 	stack_t *tmp;
 
@@ -79,5 +78,4 @@ void add_to_queue(stack_t **new_node, __attribute__((unused))unsigned int ln)
 
 	tmp->next = *new_node;
 	(*new_node)->prev = tmp;
-
 }
