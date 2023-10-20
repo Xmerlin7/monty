@@ -5,7 +5,6 @@
  * @file_name: the file namepath
  * Return: void
  */
-
 void open_file(char *file_name)
 {
 	FILE *_fd = fopen(file_name, "r");
@@ -19,10 +18,9 @@ void open_file(char *file_name)
 
 /**
  * read_file - reads a file
- * @fd: pointer to file descriptor
+ * @_fd: pointer to file descriptor
  * Return: void
  */
-
 void read_file(FILE *_fd)
 {
 	int line_number, format = 0;
@@ -41,11 +39,9 @@ void read_file(FILE *_fd)
  * which function to call
  * @buffer: line from the file
  * @line_number: line number
- * @format:  storage format. If 0 Nodes will be entered as a stack.
- * if 1 nodes will be entered as a queue.
+ * @format: storage format.
  * Return: Returns 0 if the opcode is stack. 1 if queue.
  */
-
 int parse_line(char *buffer, int line_number, int format)
 {
 	char *_opcode, *val;
@@ -69,7 +65,47 @@ int parse_line(char *buffer, int line_number, int format)
 }
 
 /**
- * find_func - find the appropriate function for the opcode
+ * call_funtion - calls the required function.
+ * @func: Pointer to the function that is about to be called.
+ * @op: string representing the opcode.
+ * @val: string representing a numeric value.
+ * @ln: line numeber for the instruction.
+ * @format: Format specifier. If 0 Nodes will be entered as a stack.
+ * if 1 nodes will be entered as a queue.
+ */
+void call_funtion(op_func func, char *op, char *val, int ln, int format)
+{
+	stack_t *_node;
+	int flag;
+	int i;
+
+	flag = 1;
+	if (strcmp(op, "push") == 0)
+	{
+		if (val != NULL && val[0] == '-')
+		{
+			val = val + 1;
+			flag = -1;
+		}
+		if (val == NULL)
+			errors(5, ln);
+		for (i = 0; val[i] != '\0'; i++)
+		{
+			if (isdigit(val[i]) == 0)
+				errors(5, ln);
+		}
+		_node = create_node(atoi(val) * flag);
+		if (format == 0)
+			func(&_node, ln);
+		if (format == 1)
+			add_to_queue(&_node, ln);
+	}
+	else
+		func(&head, ln);
+}
+
+/**
+ * find_function - find the appropriate function for the opcode
  * @opcode: opcode
  * @value: argument of opcode
  * @format:  storage format. If 0 Nodes will be entered as a stack.
@@ -113,44 +149,4 @@ void find_function(char *opcode, char *value, int ln, int format)
 	}
 	if (flag == 1)
 		errors(3, ln, opcode);
-}
-
-/**
- * call_fun - Calls the required function.
- * @func: Pointer to the function that is about to be called.
- * @op: string representing the opcode.
- * @val: string representing a numeric value.
- * @ln: line numeber for the instruction.
- * @format: Format specifier. If 0 Nodes will be entered as a stack.
- * if 1 nodes will be entered as a queue.
- */
-void call_funtion(op_func func, char *op, char *val, int ln, int format)
-{
-	stack_t *_node;
-	int flag;
-	int i;
-
-	flag = 1;
-	if (strcmp(op, "push") == 0)
-	{
-		if (val != NULL && val[0] == '-')
-		{
-			val = val + 1;
-			flag = -1;
-		}
-		if (val == NULL)
-			errors(5, ln);
-		for (i = 0; val[i] != '\0'; i++)
-		{
-			if (isdigit(val[i]) == 0)
-				errors(5, ln);
-		}
-		_node = create_node(atoi(val) * flag);
-		if (format == 0)
-			func(&_node, ln);
-		if (format == 1)
-			add_to_queue(&_node, ln);
-	}
-	else
-		func(&head, ln);
 }
